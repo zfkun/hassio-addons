@@ -1,0 +1,6 @@
+---
+configuration:
+  config_path:
+    name: 配置文件路径
+    description: >-
+       指定配置文件存放路径 (默认在 "/config/godns.yaml")

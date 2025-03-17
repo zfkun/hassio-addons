@@ -1,27 +1,12 @@
-# zfkun Home Assistant add-on repository
+# Home Assistant Add-on: GoDNS
 
-
-
-## Add-ons
-
-This repository contains the following add-ons
-
-### [GoDNS](./godns)
+A dynamic DNS client tool that supports AliDNS, Cloudflare, Google Domains, DNSPod, HE.net & DuckDNS & DreamHost, etc.
 
 ![Supports aarch64 Architecture][aarch64-shield]
 ![Supports amd64 Architecture][amd64-shield]
 ![Supports armhf Architecture][armhf-shield]
 ![Supports armv7 Architecture][armv7-shield]
 ![Supports i386 Architecture][i386-shield]
-
-> Home Assistant plugin adapted for [GoDNS](https://github.com/TimothyYe/godns) 
-
-
-## Install
-
-1. Go to the Supervisor add-on store
-2. Add this repository by entering the following URL: `https://github.com/zfkun/hassio-addons`
-3. You should now see the `zfkun addons repository` block in the store
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg

@@ -1,0 +1,6 @@
+---
+configuration:
+  config_path:
+    name: Config File Path
+    description: >-
+       Specify a config file (default "/config/godns.yaml")

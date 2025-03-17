@@ -1,0 +1,25 @@
+---
+version: 3.2.2
+slug: godns
+name: GoDNS
+description: "A dynamic DNS client tool that supports AliDNS, Cloudflare, Google Domains, DNSPod, HE.net & DuckDNS & DreamHost, etc"
+url: https://github.com/zfkun/hassio-addons/tree/main/godns
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+image: zfkun/{arch}-hass-addon-godns
+
+ingress: true
+ingress_port: 9000
+init: false
+panel_icon: mdi:dns
+map:
+  - type: config
+    read_only: False
+options:
+  config_path: "/config/godns.yaml"
+schema:
+  config_path: str
