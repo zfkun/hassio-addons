@@ -8,6 +8,6 @@ else
 fi
 
 echo "$e" > /run/s6-linux-init-container-results/exitcode
-# exec /run/s6/basedir/bin/halt
+exec /run/s6/basedir/bin/halt
 
 bashio::log.info "Service restart after closing"

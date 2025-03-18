@@ -3,6 +3,15 @@
 profile godns flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
+  # Network Requests
+  /usr/share/ca-certificates/** r,
+  /etc/ssl/certs/** r,
+  /etc/resolv.conf r,
+  /etc/nsswitch.conf r,
+  /etc/hosts r,
+  /etc/nsswitch.conf r,
+  /proc/sys/net/** r,
+
   # Capabilities
   file,
   signal (send) set=(kill,term,int,hup,cont),
@@ -33,6 +42,15 @@ profile godns flags=(attach_disconnected,mediate_deleted) {
   profile godns flags=(attach_disconnected,mediate_deleted) {
     #include <abstractions/base>
 
+    # Network Requests
+    /usr/share/ca-certificates/** r,
+    /etc/ssl/certs/** r,
+    /etc/resolv.conf r,
+    /etc/nsswitch.conf r,
+    /etc/hosts r,
+    /etc/nsswitch.conf r,
+    /proc/sys/net/** r,
+
     # Receive signals from S6-Overlay
     signal (receive) peer=*_godns,
 
@@ -49,7 +67,7 @@ profile godns flags=(attach_disconnected,mediate_deleted) {
     # 2. Add `complain` as a flag to this profile temporarily and run the addon
     # 3. Review the audit log with `journalctl _TRANSPORT="audit" -g 'apparmor="ALLOWED"'` and add other access as needed
     # Remember to remove the `complain` flag when you are done
-    /usr/bin/godns r,
+    /usr/bin/godns rix,
     /bin/bash rix,
     /bin/echo ix,
     /etc/passwd r,

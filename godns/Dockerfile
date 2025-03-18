@@ -37,7 +37,5 @@ RUN \
 # Copy data
 COPY rootfs /
 
-RUN chmod a+x /etc/s6-overlay/s6-rc.d/godns/*
-
 # Health check
 HEALTHCHECK --interval=5m --start-period=2m CMD [ "$(s6-svstat -u /run/service/godns)" = "true" ]

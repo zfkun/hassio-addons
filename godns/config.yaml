@@ -15,6 +15,7 @@ image: zfkun/{arch}-hass-addon-godns
 ingress: true
 ingress_port: 9000
 init: false
+startup: services
 panel_icon: mdi:dns
 map:
   - type: config
