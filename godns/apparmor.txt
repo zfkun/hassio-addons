@@ -51,7 +51,6 @@ profile godns flags=(attach_disconnected,mediate_deleted) {
     # Remember to remove the `complain` flag when you are done
     /usr/bin/godns r,
     /bin/bash rix,
-    /bin/echo ix,
     /etc/passwd r,
     /dev/tty rw,
   }
