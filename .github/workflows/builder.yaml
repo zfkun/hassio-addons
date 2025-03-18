@@ -112,7 +112,6 @@ jobs:
             --${{ matrix.arch }} \
             --target /data/${{ matrix.addon }} \
             --image "${{ steps.check.outputs.image }}" \
-            --docker-hub-check \
             --addon
 
       - name: Login to GitHub Container Registry
