@@ -30,6 +30,7 @@ RUN \
   && tar -xzf /tmp/godns.tar.gz -C /tmp/godns-files \
   && mv -f /tmp/godns-files/godns /usr/bin/godns \
   && rm -rf /tmp/* \
+  && chown root:root /usr/bin/godns \
   && chmod a+x /usr/bin/godns
 
 # Copy data

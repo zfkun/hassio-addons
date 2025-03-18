@@ -7,4 +7,5 @@ godns_config_path=$(bashio::config 'config_path')
 bashio::log.info "Init GoDNS config: config_path = ${godns_config_path}"
 
 bashio::log.info "Starting GoDNS service..."
+exec 2>&1
 exec /usr/bin/godns -c $godns_config_path
