@@ -1,5 +1,5 @@
 ---
-version: 3.2.2
+version: 3.2.3
 slug: godns
 name: GoDNS
 description: "A dynamic DNS client tool that supports AliDNS, Cloudflare, Google Domains, DNSPod, HE.net & DuckDNS & DreamHost, etc"
