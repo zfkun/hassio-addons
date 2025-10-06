@@ -9,4 +9,4 @@ codenotary:
   signer: zfkun@msn.com
   base_image: notary@home-assistant.io
 args:
-  GODNS_VERSION: 3.2.3
+  GODNS_VERSION: 3.2.4
