@@ -1,3 +1,7 @@
+## 3.3.1
+
+- Update to v3.3.1
+
 ## 3.3
 
 - Update to v3.3
