@@ -10,7 +10,7 @@ arch:
   - armhf
   - armv7
   - i386
-image: zfkun/{arch}-hass-addon-godns
+image: ghcr.io/zfkun/{arch}-hass-addon-godns
 
 ingress: true
 ingress_port: 9000
