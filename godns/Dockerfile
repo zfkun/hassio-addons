@@ -1,4 +1,5 @@
 ARG BUILD_FROM
+
 FROM ${BUILD_FROM}
 
 # Setup
@@ -7,7 +8,9 @@ ARG \
   GODNS_REPO=https://github.com/TimothyYe/godns \
   GODNS_VERSION
 
-ENV LANG C.UTF-8
+# Default Env
+ENV \
+    LANG="C.UTF-8"
 
 # Init
 RUN \
