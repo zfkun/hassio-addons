@@ -22,7 +22,3 @@ init: false
 startup: system
 panel_icon: mdi:camera-wireless
 map: [ "config:rw", "media", "ssl" ]
-options:
-  config_path: "/config/go2rtc.yaml"
-schema:
-  config_path: str
