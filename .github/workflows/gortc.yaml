@@ -61,6 +61,7 @@ jobs:
             target="ghcr.io/zfkun/${arch}-hass-addon-go2rtc:${TAG}"
             latest_target="ghcr.io/zfkun/${arch}-hass-addon-go2rtc:latest"
 
+            # 避免覆盖旧版本
             if skopeo inspect docker://$target >/dev/null 2>&1; then
               echo "✔ $arch already exists, skip"
 
@@ -99,6 +100,10 @@ jobs:
 
       - name: Bump add-on version
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
           sed -i 's/^version:.*/version: "${{ steps.upstream.outputs.tag }}"/' go2rtc/config.yaml
-          git commit -am "go2rtc: bump version to ${{ steps.upstream.outputs.tag }}"
+          git add go2rtc/config.yaml
+          git commit -m "go2rtc: bump version to ${{ steps.upstream.outputs.tag }} [skip ci]"
           git push

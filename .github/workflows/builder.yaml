@@ -8,9 +8,13 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'go2rtc/**'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'go2rtc/**'
 
 jobs:
   init:
