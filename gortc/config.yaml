@@ -1,0 +1,28 @@
+---
+version: 3.3.5
+slug: go2rtc
+name: go2rtc
+description: "Hardware transcoding for Intel (VAAPI) and Raspberry (V4L2)"
+url: https://github.com/zfkun/hassio-addons/tree/main/go2rtc
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+image: ghcr.io/zfkun/{arch}-hass-addon-go2rtc
+
+host_network: true
+homeassistant_api: true
+video: true
+audio: true
+ingress: true
+ingress_port: 1984
+init: false
+startup: system
+panel_icon: mdi:camera-wireless
+map: [ "config:rw", "media", "ssl" ]
+options:
+  config_path: "/config/go2rtc.yaml"
+schema:
+  config_path: str

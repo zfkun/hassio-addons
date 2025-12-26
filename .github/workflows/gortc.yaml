@@ -1,0 +1,66 @@
+name: Sync go2rtc (HA arch images)
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo jq
+
+      - name: Get latest upstream release
+        id: upstream
+        run: |
+          tag=$(curl -s https://api.github.com/repos/AlexxIT/go2rtc/releases/latest | jq -r .tag_name)
+          echo "tag=${tag#v}" >> $GITHUB_OUTPUT
+
+      - name: Login to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            skopeo login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+      - name: Sync per-arch images
+        run: |
+          TAG=${{ steps.upstream.outputs.tag }}
+
+          declare -A ARCH_MAP=(
+            [amd64]="linux/amd64"
+            [aarch64]="linux/arm64"
+            [armv7]="linux/arm/v7"
+            [armhf]="linux/arm/v6"
+            [i386]="linux/386"
+          )
+
+          for arch in "${!ARCH_MAP[@]}"; do
+            target="ghcr.io/zfkun/${arch}-hass-addon-go2rtc:${TAG}"
+
+            if skopeo inspect docker://$target >/dev/null 2>&1; then
+              echo "✔ $arch already exists, skip"
+              continue
+            fi
+
+            echo "→ syncing $arch"
+            skopeo copy \
+              --override-os linux \
+              --override-arch ${ARCH_MAP[$arch]#linux/} \
+              docker://docker.io/alexxit/go2rtc:${TAG} \
+              docker://$target
+          done
+
+      - name: Bump add-on version
+        run: |
+          sed -i 's/^version:.*/version: "${{ steps.upstream.outputs.tag }}"/' go2rtc/config.yaml
+          git commit -am "go2rtc: bump version to ${{ steps.upstream.outputs.tag }}"
+          git push
