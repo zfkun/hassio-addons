@@ -43,31 +43,58 @@ jobs:
           declare -A ARCH_MAP=(
             [amd64]="linux/amd64"
             [aarch64]="linux/arm64"
-            [armv7]="linux/arm/v7"
-            [armhf]="linux/arm/v6"
+            [armv7]="linux/arm/v7"  # 需要特殊处理
+            [armhf]="linux/arm/v6"  # 需要特殊处理
             [i386]="linux/386"
+          )
+        
+          # 定义 skopeo 参数映射
+          declare -A SKEPO_PARAMS=(
+            [amd64]="--override-os linux --override-arch amd64"
+            [aarch64]="--override-os linux --override-arch arm64"
+            [armv7]="--override-os linux --override-arch arm --override-variant v7"
+            [armhf]="--override-os linux --override-arch arm --override-variant v6"
+            [i386]="--override-os linux --override-arch 386"
           )
 
           for arch in "${!ARCH_MAP[@]}"; do
             target="ghcr.io/zfkun/${arch}-hass-addon-go2rtc:${TAG}"
+            latest_target="ghcr.io/zfkun/${arch}-hass-addon-go2rtc:latest"
 
             if skopeo inspect docker://$target >/dev/null 2>&1; then
               echo "✔ $arch already exists, skip"
+
+              # 即使版本已存在，也要确保 latest 标签也存在
+              if ! skopeo inspect docker://$latest_target >/dev/null 2>&1; then
+                echo "→ creating latest tag for $arch"
+                skopeo copy \
+                  $(echo ${SKEPO_PARAMS[$arch]}) \
+                  docker://docker.io/alexxit/go2rtc:${TAG} \
+                  docker://$latest_target
+              fi
+
               continue
             fi
 
+            echo "Checking availability of $arch (${ARCH_MAP[$arch]}) in upstream..."
+
             if ! skopeo inspect docker://docker.io/alexxit/go2rtc:${TAG} \
-                --override-arch ${ARCH_MAP[$arch]#linux/} >/dev/null 2>&1; then
-                echo "⚠ $arch not available in upstream, skip"
-                continue
+                ${SKEPO_PARAMS[$arch]} >/dev/null 2>&1; then
+              echo "⚠ $arch not available in upstream, skip"
+              continue
             fi
 
             echo "→ syncing $arch"
             skopeo copy \
-              --override-os linux \
-              --override-arch ${ARCH_MAP[$arch]#linux/} \
+              $(echo ${SKEPO_PARAMS[$arch]}) \
               docker://docker.io/alexxit/go2rtc:${TAG} \
               docker://$target
+
+            # 同步对应的 latest 标签
+            skopeo copy \
+              ${SKEPO_PARAMS[$arch]} \
+              docker://docker.io/alexxit/go2rtc:${TAG} \
+              docker://$latest_target
           done
 
       - name: Bump add-on version
