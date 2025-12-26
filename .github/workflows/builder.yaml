@@ -13,8 +13,6 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - 'go2rtc/**'
 
 jobs:
   init:
@@ -38,9 +36,19 @@ jobs:
       - name: Get changed add-ons
         id: changed_addons
         run: |
+          EXCLUDE_ADDONS=("go2rtc")
+
           declare -a changed_addons
           for addon in ${{ steps.addons.outputs.addons }}; do
-            if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon ]]; then
+            skip_addon=false
+            for exclude in "${EXCLUDE_ADDONS[@]}"; do
+              if [[ "$addon" == "$exclude" ]]; then
+                skip_addon=true
+                break
+              fi
+            done
+
+            if [[ "$skip_addon" == false ]] && [[ "${{ steps.changed_files.outputs.all }}" =~ $addon ]]; then
               for file in ${{ env.MONITORED_FILES }}; do
                   if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon/$file ]]; then
                     if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
