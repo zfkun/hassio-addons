@@ -35,6 +35,11 @@ jobs:
         run: |
           TAG=${{ steps.upstream.outputs.tag }}
 
+          echo "Checking upstream image manifest for tag: $TAG"
+          echo "=== Docker manifest inspect ==="
+          docker manifest inspect docker.io/alexxit/go2rtc:${TAG} | jq '.' || echo "Manifest inspect failed"
+          echo "==============================="
+
           declare -A ARCH_MAP=(
             [amd64]="linux/amd64"
             [aarch64]="linux/arm64"
@@ -49,6 +54,12 @@ jobs:
             if skopeo inspect docker://$target >/dev/null 2>&1; then
               echo "✔ $arch already exists, skip"
               continue
+            fi
+
+            if ! skopeo inspect docker://docker.io/alexxit/go2rtc:${TAG} \
+                --override-arch ${ARCH_MAP[$arch]#linux/} >/dev/null 2>&1; then
+                echo "⚠ $arch not available in upstream, skip"
+                continue
             fi
 
             echo "→ syncing $arch"
