@@ -1,5 +1,5 @@
 ---
-version: "1.9.13"
+version: "1.9.14"
 slug: go2rtc
 name: go2rtc
 description: "Hardware transcoding for Intel (VAAPI) and Raspberry (V4L2)"
