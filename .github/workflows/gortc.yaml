@@ -35,6 +35,12 @@ jobs:
         run: |
           TAG=${{ steps.upstream.outputs.tag }}
 
+          # 检查TAG是否有效
+          if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
+            echo "ERROR: Invalid tag received: $TAG"
+            exit 1
+          fi
+
           echo "Checking upstream image manifest for tag: $TAG"
           echo "=== Docker manifest inspect ==="
           docker manifest inspect docker.io/alexxit/go2rtc:${TAG} | jq '.' || echo "Manifest inspect failed"
@@ -103,9 +109,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # 检查TAG是否有效
+          TAG="${{ steps.upstream.outputs.tag }}"
+          if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
+            echo "ERROR: Invalid tag received: $TAG, exiting without changes."
+            exit 1
+          fi
+
           # 检查当前版本是否与最新版本相同
           CURRENT_VERSION=$(grep "^version:" go2rtc/config.yaml | sed 's/version: "\(.*\)"/\1/')
-          LATEST_VERSION="${{ steps.upstream.outputs.tag }}"
+          LATEST_VERSION="$TAG"
 
           echo "Current version: $CURRENT_VERSION"
           echo "Latest version: $LATEST_VERSION"
@@ -115,12 +128,12 @@ jobs:
             exit 0
           fi
 
-          sed -i 's/^version:.*/version: "${{ steps.upstream.outputs.tag }}"/' go2rtc/config.yaml
+          sed -i 's/^version:.*/version: "'$LATEST_VERSION'"/' go2rtc/config.yaml
           git add go2rtc/config.yaml
 
           # 检查是否有实际更改
           if ! git diff --quiet HEAD; then
-            git commit -m "go2rtc: bump version to ${{ steps.upstream.outputs.tag }} [skip ci]"
+            git commit -m "go2rtc: bump version to $LATEST_VERSION [skip ci]"
             git push
           else
             echo "No changes to commit"
