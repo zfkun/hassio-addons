@@ -2,7 +2,7 @@ name: Sync go2rtc (HA arch images)
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 2 * * *"
   workflow_dispatch:
 
 jobs:
@@ -103,7 +103,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # 检查当前版本是否与最新版本相同
+          CURRENT_VERSION=$(grep "^version:" go2rtc/config.yaml | sed 's/version: "\(.*\)"/\1/')
+          LATEST_VERSION="${{ steps.upstream.outputs.tag }}"
+
+          echo "Current version: $CURRENT_VERSION"
+          echo "Latest version: $LATEST_VERSION"
+
+          if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
+            echo "Version is already up to date, skipping commit."
+            exit 0
+          fi
+
           sed -i 's/^version:.*/version: "${{ steps.upstream.outputs.tag }}"/' go2rtc/config.yaml
           git add go2rtc/config.yaml
-          git commit -m "go2rtc: bump version to ${{ steps.upstream.outputs.tag }} [skip ci]"
-          git push
+
+          # 检查是否有实际更改
+          if ! git diff --quiet HEAD; then
+            git commit -m "go2rtc: bump version to ${{ steps.upstream.outputs.tag }} [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
